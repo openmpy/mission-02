@@ -59,9 +59,9 @@ class LoanServiceTest {
 
         // stub
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(loanRepository.existsByUserIdAndIsReturnedFalse(anyLong())).thenReturn(false);
-        when(loanRepository.save(any())).thenReturn(requestDto.toEntity());
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(loanRepository.existsByUserAndIsReturnedFalse(any())).thenReturn(false);
+        when(loanRepository.save(any())).thenReturn(requestDto.toEntity(book, user));
 
         // when
         CreateLoanResponseDto responseDto = loanService.create(requestDto);
@@ -150,8 +150,8 @@ class LoanServiceTest {
 
         // stub
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(loanRepository.existsByUserIdAndIsReturnedFalse(anyLong())).thenReturn(true);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(loanRepository.existsByUserAndIsReturnedFalse(any())).thenReturn(true);
 
         // when & then
         CustomApiException exception = Assertions.assertThrows(CustomApiException.class, () ->
@@ -175,8 +175,8 @@ class LoanServiceTest {
 
         Loan loan = Loan.builder()
                 .id(1L)
-                .bookId(1L)
-                .userId(1L)
+                .book(book)
+                .user(user)
                 .isReturned(false)
                 .loanedAt(LocalDateTime.now())
                 .returnedAt(null)
@@ -186,8 +186,8 @@ class LoanServiceTest {
 
         // stub
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(loanRepository.findByBookIdAndUserIdAndIsReturnedFalse(anyLong(), anyLong())).thenReturn(Optional.of(loan));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(loanRepository.findByBookAndUserAndIsReturnedFalse(any(), any())).thenReturn(Optional.of(loan));
 
         // when
         ReturnedLoanResponseDto responseDto = loanService.returned(requestDto);
@@ -251,8 +251,8 @@ class LoanServiceTest {
 
         // stub
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(loanRepository.findByBookIdAndUserIdAndIsReturnedFalse(anyLong(), anyLong())).thenReturn(Optional.empty());
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(loanRepository.findByBookAndUserAndIsReturnedFalse(any(), any())).thenReturn(Optional.empty());
 
         // when & then
         CustomApiException exception = Assertions.assertThrows(CustomApiException.class, () ->
@@ -270,7 +270,6 @@ class LoanServiceTest {
                 .title("어린왕자")
                 .build();
 
-
         User user = User.builder()
                 .id(1L)
                 .name("손흥민")
@@ -278,15 +277,15 @@ class LoanServiceTest {
 
         Loan loan1 = Loan.builder()
                 .id(1L)
-                .bookId(1L)
-                .userId(1L)
+                .book(book)
+                .user(user)
                 .isReturned(true)
                 .build();
 
         Loan loan2 = Loan.builder()
                 .id(2L)
-                .bookId(2L)
-                .userId(1L)
+                .book(book)
+                .user(user)
                 .isReturned(false)
                 .build();
 
@@ -294,8 +293,7 @@ class LoanServiceTest {
 
         // stub
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
-        when(loanRepository.findByUserIdOrderByLoanedAt(anyLong())).thenReturn(loanList);
+        when(loanRepository.findByUserOrderByLoanedAt(any())).thenReturn(loanList);
 
         // when
         List<GetLoanResponseDto> responseDtoList = loanService.getListForUser(1L);
