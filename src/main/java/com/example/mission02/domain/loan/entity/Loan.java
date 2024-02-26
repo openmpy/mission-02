@@ -31,4 +31,9 @@ public class Loan {
     private LocalDateTime loanedAt;
 
     private LocalDateTime returnedAt;
+
+    public void returned(LocalDateTime returnedAt) {
+        this.isReturned = true;
+        this.returnedAt = returnedAt;
+    }
 }

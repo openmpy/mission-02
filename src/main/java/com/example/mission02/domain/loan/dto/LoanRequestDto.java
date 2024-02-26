@@ -27,4 +27,15 @@ public class LoanRequestDto {
                     .build();
         }
     }
+
+    @AllArgsConstructor
+    @Getter
+    public static class ReturnedLoanRequestDto {
+
+        @NotNull(message = "도서 번호를 입력해주세요.")
+        private Long bookId;
+
+        @NotNull(message = "회원 번호를 입력해주세요.")
+        private Long userId;
+    }
 }
