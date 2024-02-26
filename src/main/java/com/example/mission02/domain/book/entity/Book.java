@@ -2,8 +2,14 @@ package com.example.mission02.domain.book.entity;
 
 import com.example.mission02.global.entity.Timestamped;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Getter
 @Entity
 public class Book extends Timestamped {
@@ -25,4 +31,8 @@ public class Book extends Timestamped {
     private String publisher;
 
     private boolean isLoaned;
+
+    public void updateLoaned(boolean loaned) {
+        this.isLoaned = loaned;
+    }
 }

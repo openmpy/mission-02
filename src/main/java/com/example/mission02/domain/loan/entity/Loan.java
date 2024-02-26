@@ -1,10 +1,16 @@
 package com.example.mission02.domain.loan.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Getter
 @Entity
 public class Loan {
@@ -19,7 +25,7 @@ public class Loan {
     @Column(nullable = false)
     private Long userId;
 
-    private boolean returned;
+    private boolean isReturned;
 
     @Column(nullable = false)
     private LocalDateTime loanedAt;
