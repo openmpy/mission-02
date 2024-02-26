@@ -1,9 +1,11 @@
 package com.example.mission02.domain.user.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 @Table(name = "users")
 public class User {

@@ -2,7 +2,9 @@ package com.example.mission02.domain.book.entity;
 
 import com.example.mission02.global.entity.Timestamped;
 import jakarta.persistence.*;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class Book extends Timestamped {
 
