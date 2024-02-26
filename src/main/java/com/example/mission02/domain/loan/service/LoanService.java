@@ -5,9 +5,11 @@ import com.example.mission02.domain.book.repository.BookRepository;
 import com.example.mission02.domain.loan.dto.LoanRequestDto.CreateLoanRequestDto;
 import com.example.mission02.domain.loan.dto.LoanRequestDto.ReturnedLoanRequestDto;
 import com.example.mission02.domain.loan.dto.LoanResponseDto.CreateLoanResponseDto;
+import com.example.mission02.domain.loan.dto.LoanResponseDto.GetLoanResponseDto;
 import com.example.mission02.domain.loan.dto.LoanResponseDto.ReturnedLoanResponseDto;
 import com.example.mission02.domain.loan.entity.Loan;
 import com.example.mission02.domain.loan.repository.LoanRepository;
+import com.example.mission02.domain.user.entity.User;
 import com.example.mission02.domain.user.repository.UserRepository;
 import com.example.mission02.global.handler.exception.CustomApiException;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -68,5 +71,21 @@ public class LoanService {
         loan.returned(LocalDateTime.now());
         book.updateLoaned(false);
         return new ReturnedLoanResponseDto(loan);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GetLoanResponseDto> getListForUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new CustomApiException("찾을 수 없는 회원 번호입니다.")
+        );
+
+        return loanRepository.findByUserIdOrderByLoanedAt(userId).stream()
+                .map(loan -> {
+                    Book book = bookRepository.findById(loan.getBookId()).orElseThrow(() ->
+                            new CustomApiException("찾을 수 없는 도서 번호입니다.")
+                    );
+                    return new GetLoanResponseDto(loan, book, user);
+                })
+                .toList();
     }
 }

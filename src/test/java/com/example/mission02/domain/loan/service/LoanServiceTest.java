@@ -5,6 +5,7 @@ import com.example.mission02.domain.book.repository.BookRepository;
 import com.example.mission02.domain.loan.dto.LoanRequestDto.CreateLoanRequestDto;
 import com.example.mission02.domain.loan.dto.LoanRequestDto.ReturnedLoanRequestDto;
 import com.example.mission02.domain.loan.dto.LoanResponseDto.CreateLoanResponseDto;
+import com.example.mission02.domain.loan.dto.LoanResponseDto.GetLoanResponseDto;
 import com.example.mission02.domain.loan.dto.LoanResponseDto.ReturnedLoanResponseDto;
 import com.example.mission02.domain.loan.entity.Loan;
 import com.example.mission02.domain.loan.repository.LoanRepository;
@@ -20,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -255,6 +257,61 @@ class LoanServiceTest {
         // when & then
         CustomApiException exception = Assertions.assertThrows(CustomApiException.class, () ->
                 loanService.returned(requestDto)
+        );
+        System.out.println("exception = " + exception);
+    }
+
+    @Test
+    @DisplayName("성공 - 회원 번호로 도서 대출 내역 목록을 조회한다.")
+    void getListForUser_01() throws Exception {
+        // given
+        Book book = Book.builder()
+                .id(1L)
+                .title("어린왕자")
+                .build();
+
+
+        User user = User.builder()
+                .id(1L)
+                .name("손흥민")
+                .build();
+
+        Loan loan1 = Loan.builder()
+                .id(1L)
+                .bookId(1L)
+                .userId(1L)
+                .isReturned(true)
+                .build();
+
+        Loan loan2 = Loan.builder()
+                .id(2L)
+                .bookId(2L)
+                .userId(1L)
+                .isReturned(false)
+                .build();
+
+        List<Loan> loanList = List.of(loan1, loan2);
+
+        // stub
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+        when(loanRepository.findByUserIdOrderByLoanedAt(anyLong())).thenReturn(loanList);
+
+        // when
+        List<GetLoanResponseDto> responseDtoList = loanService.getListForUser(1L);
+
+        // then
+        Assertions.assertEquals(2, responseDtoList.size());
+        Assertions.assertTrue(responseDtoList.get(0).isReturned());
+        Assertions.assertFalse(responseDtoList.get(1).isReturned());
+    }
+
+    @Test
+    @DisplayName("실패 - 찾을 수 없는 회원 번호로 도서 대출 내역 목록 조회에 실패한다.")
+    void getListForUser_02() throws Exception {
+        // when & then
+        CustomApiException exception = Assertions.assertThrows(CustomApiException.class, () ->
+                loanService.getListForUser(1L)
         );
         System.out.println("exception = " + exception);
     }
