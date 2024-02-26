@@ -1,8 +1,6 @@
 package com.example.mission02.domain.loan.dto;
 
-import com.example.mission02.domain.book.entity.Book;
 import com.example.mission02.domain.loan.entity.Loan;
-import com.example.mission02.domain.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 
@@ -26,8 +24,8 @@ public class LoanResponseDto {
 
         public CreateLoanResponseDto(Loan loan) {
             this.id = loan.getId();
-            this.bookId = loan.getBookId();
-            this.userId = loan.getUserId();
+            this.bookId = loan.getBook().getId();
+            this.userId = loan.getUser().getId();
             this.isReturned = loan.isReturned();
             this.loanedAt = loan.getLoanedAt();
             this.returnedAt = loan.getReturnedAt();
@@ -50,8 +48,8 @@ public class LoanResponseDto {
 
         public ReturnedLoanResponseDto(Loan loan) {
             this.id = loan.getId();
-            this.bookId = loan.getBookId();
-            this.userId = loan.getUserId();
+            this.bookId = loan.getBook().getId();
+            this.userId = loan.getUser().getId();
             this.isReturned = loan.isReturned();
             this.loanedAt = loan.getLoanedAt();
             this.returnedAt = loan.getReturnedAt();
@@ -74,12 +72,12 @@ public class LoanResponseDto {
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private final LocalDateTime returnedAt;
 
-        public GetLoanResponseDto(Loan loan, Book book, User user) {
+        public GetLoanResponseDto(Loan loan) {
             this.id = loan.getId();
-            this.title = book.getTitle();
-            this.author = book.getAuthor();
-            this.name = user.getName();
-            this.phone = user.getPhone();
+            this.title = loan.getBook().getTitle();
+            this.author = loan.getBook().getAuthor();
+            this.name = loan.getUser().getName();
+            this.phone = loan.getUser().getPhone();
             this.isReturned = loan.isReturned();
             this.loanedAt = loan.getLoanedAt();
             this.returnedAt = loan.getReturnedAt();

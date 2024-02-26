@@ -38,16 +38,16 @@ public class LoanService {
         }
 
         // 회원 예외 처리
-        if (!userRepository.existsById(requestDto.getUserId())) {
-            throw new CustomApiException("찾을 수 없는 회원 번호입니다.");
-        }
+        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(() ->
+                new CustomApiException("찾을 수 없는 회원 번호입니다.")
+        );
 
         // 대출 예외 처리
-        if (loanRepository.existsByUserIdAndIsReturnedFalse(requestDto.getUserId())) {
+        if (loanRepository.existsByUserAndIsReturnedFalse(user)) {
             throw new CustomApiException("반납하지 않은 도서가 존재합니다.");
         }
 
-        Loan loan = loanRepository.save(requestDto.toEntity());
+        Loan loan = loanRepository.save(requestDto.toEntity(book, user));
         book.updateLoaned(true);
         return new CreateLoanResponseDto(loan);
     }
@@ -60,12 +60,12 @@ public class LoanService {
         );
 
         // 회원 예외 처리
-        if (!userRepository.existsById(requestDto.getUserId())) {
-            throw new CustomApiException("찾을 수 없는 회원 번호입니다.");
-        }
+        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(() ->
+                new CustomApiException("찾을 수 없는 회원 번호입니다.")
+        );
 
         // 대출 예외 처리
-        Loan loan = loanRepository.findByBookIdAndUserIdAndIsReturnedFalse(requestDto.getBookId(), requestDto.getUserId())
+        Loan loan = loanRepository.findByBookAndUserAndIsReturnedFalse(book, user)
                 .orElseThrow(() -> new CustomApiException("찾을 수 없는 대출 정보입니다."));
 
         loan.returned(LocalDateTime.now());
@@ -79,13 +79,8 @@ public class LoanService {
                 new CustomApiException("찾을 수 없는 회원 번호입니다.")
         );
 
-        return loanRepository.findByUserIdOrderByLoanedAt(userId).stream()
-                .map(loan -> {
-                    Book book = bookRepository.findById(loan.getBookId()).orElseThrow(() ->
-                            new CustomApiException("찾을 수 없는 도서 번호입니다.")
-                    );
-                    return new GetLoanResponseDto(loan, book, user);
-                })
+        return loanRepository.findByUserOrderByLoanedAt(user).stream()
+                .map(GetLoanResponseDto::new)
                 .toList();
     }
 }
