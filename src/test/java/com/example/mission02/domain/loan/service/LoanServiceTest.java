@@ -3,7 +3,10 @@ package com.example.mission02.domain.loan.service;
 import com.example.mission02.domain.book.entity.Book;
 import com.example.mission02.domain.book.repository.BookRepository;
 import com.example.mission02.domain.loan.dto.LoanRequestDto.CreateLoanRequestDto;
+import com.example.mission02.domain.loan.dto.LoanRequestDto.ReturnedLoanRequestDto;
 import com.example.mission02.domain.loan.dto.LoanResponseDto.CreateLoanResponseDto;
+import com.example.mission02.domain.loan.dto.LoanResponseDto.ReturnedLoanResponseDto;
+import com.example.mission02.domain.loan.entity.Loan;
 import com.example.mission02.domain.loan.repository.LoanRepository;
 import com.example.mission02.domain.user.entity.User;
 import com.example.mission02.domain.user.repository.UserRepository;
@@ -16,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -150,6 +154,107 @@ class LoanServiceTest {
         // when & then
         CustomApiException exception = Assertions.assertThrows(CustomApiException.class, () ->
                 loanService.create(requestDto)
+        );
+        System.out.println("exception = " + exception);
+    }
+
+    @Test
+    @DisplayName("성공 - 선택한 도서 반납에 성공한다.")
+    void returned_01() throws Exception {
+        // given
+        Book book = Book.builder()
+                .id(1L)
+                .isLoaned(true)
+                .build();
+
+        User user = User.builder()
+                .id(1L)
+                .build();
+
+        Loan loan = Loan.builder()
+                .id(1L)
+                .bookId(1L)
+                .userId(1L)
+                .isReturned(false)
+                .loanedAt(LocalDateTime.now())
+                .returnedAt(null)
+                .build();
+
+        ReturnedLoanRequestDto requestDto = new ReturnedLoanRequestDto(book.getId(), user.getId());
+
+        // stub
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        when(loanRepository.findByBookIdAndUserIdAndIsReturnedFalse(anyLong(), anyLong())).thenReturn(Optional.of(loan));
+
+        // when
+        ReturnedLoanResponseDto responseDto = loanService.returned(requestDto);
+
+        // then
+        Assertions.assertTrue(responseDto.isReturned());
+        Assertions.assertNotNull(responseDto.getReturnedAt());
+        Assertions.assertFalse(book.isLoaned());
+    }
+
+    @Test
+    @DisplayName("실패 - 찾을 수 없는 도서 번호로 도서 반납에 실패한다.")
+    void returned_02() throws Exception {
+        // given
+        User user = User.builder()
+                .id(1L)
+                .build();
+
+        ReturnedLoanRequestDto requestDto = new ReturnedLoanRequestDto(1L, user.getId());
+
+        // when & then
+        CustomApiException exception = Assertions.assertThrows(CustomApiException.class, () ->
+                loanService.returned(requestDto)
+        );
+        System.out.println("exception = " + exception);
+    }
+
+    @Test
+    @DisplayName("실패 - 찾을 수 없는 회원 번호로 도서 반납에 실패한다.")
+    void returned_03() throws Exception {
+        // given
+        Book book = Book.builder()
+                .id(1L)
+                .build();
+
+        ReturnedLoanRequestDto requestDto = new ReturnedLoanRequestDto(book.getId(), 1L);
+
+        // stub
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+
+        // when & then
+        CustomApiException exception = Assertions.assertThrows(CustomApiException.class, () ->
+                loanService.returned(requestDto)
+        );
+        System.out.println("exception = " + exception);
+    }
+
+    @Test
+    @DisplayName("실패 - 찾을 수 없는 대출 정보로 도서 반납에 실패한다.")
+    void returned_04() throws Exception {
+        // given
+        Book book = Book.builder()
+                .id(1L)
+                .build();
+
+        User user = User.builder()
+                .id(1L)
+                .build();
+
+        ReturnedLoanRequestDto requestDto = new ReturnedLoanRequestDto(book.getId(), user.getId());
+
+        // stub
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        when(loanRepository.findByBookIdAndUserIdAndIsReturnedFalse(anyLong(), anyLong())).thenReturn(Optional.empty());
+
+        // when & then
+        CustomApiException exception = Assertions.assertThrows(CustomApiException.class, () ->
+                loanService.returned(requestDto)
         );
         System.out.println("exception = " + exception);
     }
