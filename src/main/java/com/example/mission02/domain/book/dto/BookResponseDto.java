@@ -9,16 +9,18 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 public class BookResponseDto {
+
     @AllArgsConstructor
-    @Getter
     @NoArgsConstructor
+    @Getter
     public static class CreateBookResponseDto {
+
         private Long id;
         private String title;
         private String author;
         private String language;
         private String publisher;
-        private boolean isLoaned;
+
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createdAt;
 
@@ -41,6 +43,7 @@ public class BookResponseDto {
         private String language;
         private String publisher;
         private boolean isLoaned;
+
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createdAt;
 
@@ -50,8 +53,8 @@ public class BookResponseDto {
             this.author = book.getAuthor();
             this.language = book.getLanguage();
             this.publisher = book.getPublisher();
+            this.isLoaned = book.isLoaned();
             this.createdAt = book.getCreatedAt();
-            this.isLoaned=book.isLoaned();
         }
     }
 }

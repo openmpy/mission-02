@@ -7,7 +7,6 @@ import com.example.mission02.domain.book.service.BookService;
 import com.example.mission02.global.dto.ResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +17,7 @@ import java.util.List;
 @RequestMapping("/api/v1/books")
 @RestController
 public class BookController {
+
     private final BookService bookService;
 
     @PostMapping
@@ -30,17 +30,17 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<?> getBookList() {
-        List<GetBookResponseDto> bookList = bookService.getBookList();
+        List<GetBookResponseDto> responseDtoList = bookService.getBookList();
         return ResponseEntity.ok().body(
-                new ResponseDto<>(true, "도서 목록 조회", bookList)
+                new ResponseDto<>(true, "도서 목록 조회", responseDtoList)
         );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getList(@PathVariable long id) {
-        GetBookResponseDto book = bookService.getBook(id);
+    public ResponseEntity<?> getList(@PathVariable Long id) {
+        GetBookResponseDto responseDto = bookService.getBook(id);
         return ResponseEntity.ok().body(
-                new ResponseDto<>(true, "특정 도서 조회", book)
+                new ResponseDto<>(true, "특정 도서 조회", responseDto)
         );
     }
 }
