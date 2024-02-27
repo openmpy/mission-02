@@ -1,8 +1,8 @@
-package com.example.mission02.domain.book.service.controller;
+package com.example.mission02.domain.book.controller;
 
-import com.example.mission02.domain.book.service.dto.BookRequestDto.CreateBookRequestDto;
-import com.example.mission02.domain.book.service.dto.BookResponseDto.CreateBookResponseDto;
-import com.example.mission02.domain.book.service.service.BookService;
+import com.example.mission02.domain.book.dto.BookRequestDto.CreateBookRequestDto;
+import com.example.mission02.domain.book.dto.BookResponseDto.CreateBookResponseDto;
+import com.example.mission02.domain.book.service.BookService;
 import com.example.mission02.global.dto.ResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class BookController {
     private final BookService bookService;
-    public BookController(BookService bookService){
+
+    public BookController(BookService bookService) {
         this.bookService = bookService;
     }
 

@@ -1,10 +1,9 @@
 package com.example.mission02.domain.book.service;
 
-import com.example.mission02.domain.book.service.dto.BookRequestDto.CreateBookRequestDto;
-import com.example.mission02.domain.book.service.dto.BookResponseDto.CreateBookResponseDto;
-import com.example.mission02.domain.book.service.entity.Book;
-import com.example.mission02.domain.book.service.repository.BookRepository;
-import com.example.mission02.domain.book.service.service.BookService;
+import com.example.mission02.domain.book.dto.BookRequestDto.CreateBookRequestDto;
+import com.example.mission02.domain.book.dto.BookResponseDto.CreateBookResponseDto;
+import com.example.mission02.domain.book.entity.Book;
+import com.example.mission02.domain.book.repository.BookRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,9 +24,10 @@ public class BookServiceTest {
 
     @Mock
     private BookRepository bookRepository;
+
     @Test
     @DisplayName("성공 - 책을 등록한다")
-    void createBook() throws Exception{
+    void createBook() throws Exception {
         CreateBookRequestDto requestDto = new CreateBookRequestDto("Book Title", "Author Name", "English", "Publisher Name");
         Book book = new Book(requestDto);
 

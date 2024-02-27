@@ -1,6 +1,6 @@
-package com.example.mission02.domain.book.service.entity;
+package com.example.mission02.domain.book.entity;
 
-import com.example.mission02.domain.book.service.dto.BookRequestDto;
+import com.example.mission02.domain.book.dto.BookRequestDto;
 import com.example.mission02.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,9 +36,9 @@ public class Book extends Timestamped {
     private LocalDateTime createdAt;
 
     public Book(BookRequestDto.CreateBookRequestDto book) {
-        this.title=book.getTitle();
-        this.author=book.getAuthor();
-        this.language=book.getLanguage();
-        this.publisher=book.getPublisher();
+        this.title = book.getTitle();
+        this.author = book.getAuthor();
+        this.language = book.getLanguage();
+        this.publisher = book.getPublisher();
     }
 }

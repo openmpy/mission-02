@@ -1,6 +1,6 @@
-package com.example.mission02.domain.book.service.repository;
+package com.example.mission02.domain.book.repository;
 
-import com.example.mission02.domain.book.service.entity.Book;
+import com.example.mission02.domain.book.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
