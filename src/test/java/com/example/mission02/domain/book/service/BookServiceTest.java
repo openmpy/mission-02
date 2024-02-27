@@ -1,9 +1,8 @@
 package com.example.mission02.domain.book.service;
 
 import com.example.mission02.domain.book.dto.BookRequestDto.CreateBookRequestDto;
-import com.example.mission02.domain.book.dto.BookResponseDto;
-import com.example.mission02.domain.book.dto.BookResponseDto.GetBookResponseDto;
 import com.example.mission02.domain.book.dto.BookResponseDto.CreateBookResponseDto;
+import com.example.mission02.domain.book.dto.BookResponseDto.GetBookResponseDto;
 import com.example.mission02.domain.book.entity.Book;
 import com.example.mission02.domain.book.repository.BookRepository;
 import org.junit.jupiter.api.Assertions;
@@ -105,12 +104,12 @@ class BookServiceTest {
     @DisplayName("성공 - 선택한 도서를 조회한다.")
     void getBook() throws Exception {
         List<Book> bookList = new ArrayList<>();
-        LongStream.range(0,3).forEach(i->{
+        LongStream.range(0, 3).forEach(i -> {
             Book book = Book.builder()
                     .id(i)
-                    .title("title"+i)
-                    .publisher(""+i)
-                    .author(""+i)
+                    .title("title" + i)
+                    .publisher("" + i)
+                    .author("" + i)
                     .language("eng")
                     .build();
             bookList.add(book);
@@ -118,7 +117,7 @@ class BookServiceTest {
 
         when(bookRepository.findAllByOrderByCreatedAtAsc()).thenReturn(bookList);
         List<GetBookResponseDto> responseDtoList = bookService.getBookList();
-        Assertions.assertEquals(3,responseDtoList.size());
-        Assertions.assertEquals("2",responseDtoList.get(2).getAuthor());
+        Assertions.assertEquals(3, responseDtoList.size());
+        Assertions.assertEquals("2", responseDtoList.get(2).getAuthor());
     }
 }
