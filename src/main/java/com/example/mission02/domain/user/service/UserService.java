@@ -12,8 +12,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    public CreateUserResponseDto CreateUser(CreateUserRequestDto requestDto){
-        if(userRepository.existsByPhone(requestDto.getPhone()) || userRepository.existsByIdentification(requestDto.getIdentification())){
+
+    public CreateUserResponseDto CreateUser(CreateUserRequestDto requestDto) {
+        if (userRepository.existsByPhone(requestDto.getPhone()) || userRepository.existsByIdentification(requestDto.getIdentification())) {
             throw new CustomApiException("이미 등록된 회원입니다.");
         }
         User user = userRepository.save(requestDto.toEntity());

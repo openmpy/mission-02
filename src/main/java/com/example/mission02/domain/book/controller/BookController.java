@@ -1,8 +1,8 @@
 package com.example.mission02.domain.book.controller;
 
 import com.example.mission02.domain.book.dto.BookRequestDto.CreateBookRequestDto;
-import com.example.mission02.domain.book.dto.BookResponseDto.GetBookResponseDto;
 import com.example.mission02.domain.book.dto.BookResponseDto.CreateBookResponseDto;
+import com.example.mission02.domain.book.dto.BookResponseDto.GetBookResponseDto;
 import com.example.mission02.domain.book.service.BookService;
 import com.example.mission02.global.dto.ResponseDto;
 import jakarta.validation.Valid;
@@ -27,7 +27,7 @@ public class BookController {
                 new ResponseDto<>(true, "게시글 작성", responseDto)
         );
     }
-  
+
     @GetMapping
     public ResponseEntity<?> getBookList() {
         List<GetBookResponseDto> bookList = bookService.getBookList();

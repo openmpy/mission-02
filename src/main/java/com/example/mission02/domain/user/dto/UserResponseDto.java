@@ -10,14 +10,14 @@ public class UserResponseDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CreateUserResponseDto{
+    public static class CreateUserResponseDto {
         private String name;
         private GenderType gender;
         private String phone;
         private String identification;
         private String address;
 
-        public CreateUserResponseDto(User user){
+        public CreateUserResponseDto(User user) {
             this.name = user.getName();
             this.gender = user.getGender();
             this.phone = user.getPhone();

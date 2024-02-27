@@ -34,7 +34,7 @@ public class BookResponseDto {
 
     @AllArgsConstructor
     @Getter
-    public static class GetBookResponseDto{
+    public static class GetBookResponseDto {
         private Long id;
         private String title;
         private String author;
@@ -44,7 +44,7 @@ public class BookResponseDto {
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createdAt;
 
-        public GetBookResponseDto(Book book){
+        public GetBookResponseDto(Book book) {
             this.id = book.getId();
             this.title = book.getTitle();
             this.author = book.getAuthor();
