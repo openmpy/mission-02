@@ -1,6 +1,5 @@
 package com.example.mission02.domain.book.entity;
 
-import com.example.mission02.domain.book.dto.BookRequestDto;
 import com.example.mission02.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,16 +30,8 @@ public class Book extends Timestamped {
     @Column(nullable = false)
     private String publisher;
 
-    @Column(nullable = false)
     private boolean isLoaned;
 
-
-    public Book(BookRequestDto.CreateBookRequestDto book) {
-        this.title = book.getTitle();
-        this.author = book.getAuthor();
-        this.language = book.getLanguage();
-        this.publisher = book.getPublisher();
-    }
 
     public void updateLoaned(boolean loaned) {
         this.isLoaned = loaned;
