@@ -6,6 +6,7 @@ import com.example.mission02.domain.book.dto.BookResponseDto.GetBookResponseDto;
 import com.example.mission02.domain.book.dto.BookResponseDto.CreateBookResponseDto;
 import com.example.mission02.domain.book.entity.Book;
 import com.example.mission02.domain.book.repository.BookRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -59,7 +62,7 @@ class BookServiceTest {
 
     @Test
     @DisplayName("성공 - 도서 목록을 조회한다.")
-    void getBookLst() throws Exception {
+    void getBookList() throws Exception {
         Book book1 = Book.builder()
                 .id(1L)
                 .title("Book 1")
@@ -96,5 +99,26 @@ class BookServiceTest {
             assertEquals(bookList.get(i).getLanguage(), serviceBookList.get(i).getLanguage());
             assertEquals(bookList.get(i).getPublisher(), serviceBookList.get(i).getPublisher());
         }
+    }
+
+    @Test
+    @DisplayName("성공 - 선택한 도서를 조회한다.")
+    void getBook() throws Exception {
+        List<Book> bookList = new ArrayList<>();
+        LongStream.range(0,3).forEach(i->{
+            Book book = Book.builder()
+                    .id(i)
+                    .title("title"+i)
+                    .publisher(""+i)
+                    .author(""+i)
+                    .language("eng")
+                    .build();
+            bookList.add(book);
+        });
+
+        when(bookRepository.findAllByOrderByCreatedAtAsc()).thenReturn(bookList);
+        List<GetBookResponseDto> responseDtoList = bookService.getBookList();
+        Assertions.assertEquals(3,responseDtoList.size());
+        Assertions.assertEquals("2",responseDtoList.get(2).getAuthor());
     }
 }
