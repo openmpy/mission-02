@@ -26,7 +26,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("성공 - 회원을 등록한다.")
-    void createUser() throws Exception {
+    void createUser_01() throws Exception {
         CreateUserRequestDto requestDto = CreateUserRequestDto.builder()
                 .name("name")
                 .gender(GenderType.FEMALE)
@@ -45,10 +45,8 @@ class UserServiceTest {
                 .build();
 
         when(userRepository.save(any(User.class))).thenReturn(user);
-        CreateUserResponseDto responseDto = userService.CreateUser(requestDto);
+        CreateUserResponseDto responseDto = userService.createUser(requestDto);
 
         assertEquals(user.getAddress(), responseDto.getAddress());
-
     }
-
 }

@@ -8,15 +8,23 @@ import com.example.mission02.global.handler.exception.CustomApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
+import static com.example.mission02.global.handler.exception.ErrorCode.ALREADY_REGISTERED_IDENTIFICATION;
+import static com.example.mission02.global.handler.exception.ErrorCode.ALREADY_REGISTERED_PHONE;
+
 @RequiredArgsConstructor
+@Service
 public class UserService {
+
     private final UserRepository userRepository;
 
-    public CreateUserResponseDto CreateUser(CreateUserRequestDto requestDto) {
-        if (userRepository.existsByPhone(requestDto.getPhone()) || userRepository.existsByIdentification(requestDto.getIdentification())) {
-            throw new CustomApiException("이미 등록된 회원입니다.");
+    public CreateUserResponseDto createUser(CreateUserRequestDto requestDto) {
+        if (userRepository.existsByPhone(requestDto.getPhone())) {
+            throw new CustomApiException(ALREADY_REGISTERED_PHONE.getMessage());
         }
+        if (userRepository.existsByIdentification(requestDto.getIdentification())) {
+            throw new CustomApiException(ALREADY_REGISTERED_IDENTIFICATION.getMessage());
+        }
+
         User user = userRepository.save(requestDto.toEntity());
         return new CreateUserResponseDto(user);
     }

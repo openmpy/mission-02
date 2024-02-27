@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.example.mission02.global.handler.exception.ErrorCode.*;
+
 @RequiredArgsConstructor
 @Service
 public class LoanService {
@@ -34,15 +36,15 @@ public class LoanService {
     public CreateLoanResponseDto create(CreateLoanRequestDto requestDto) {
         // 도서 예외 처리
         Book book = bookRepository.findById(requestDto.getBookId()).orElseThrow(() ->
-                new CustomApiException("찾을 수 없는 도서 번호입니다.")
+                new CustomApiException(NOT_FOUND_BOOK_ID.getMessage())
         );
         if (book.isLoaned()) {
-            throw new CustomApiException("이미 대출 상태의 도서입니다.");
+            throw new CustomApiException(ALREADY_BOOK_LOAN.getMessage());
         }
 
         // 회원 예외 처리
         User user = userRepository.findById(requestDto.getUserId()).orElseThrow(() ->
-                new CustomApiException("찾을 수 없는 회원 번호입니다.")
+                new CustomApiException(NOT_FOUND_USER_ID.getMessage())
         );
 
         // 패널티 체크
@@ -50,7 +52,7 @@ public class LoanService {
 
         // 대출 예외 처리
         if (loanRepository.existsByUserAndIsReturnedFalse(user)) {
-            throw new CustomApiException("반납하지 않은 도서가 존재합니다.");
+            throw new CustomApiException(UNRETURNED_BOOK_EXISTS.getMessage());
         }
 
         Loan loan = loanRepository.save(requestDto.toEntity(book, user));
@@ -62,17 +64,17 @@ public class LoanService {
     public ReturnedLoanResponseDto returned(ReturnedLoanRequestDto requestDto) {
         // 도서 예외 처리
         Book book = bookRepository.findById(requestDto.getBookId()).orElseThrow(() ->
-                new CustomApiException("찾을 수 없는 도서 번호입니다.")
+                new CustomApiException(NOT_FOUND_BOOK_ID.getMessage())
         );
 
         // 회원 예외 처리
         User user = userRepository.findById(requestDto.getUserId()).orElseThrow(() ->
-                new CustomApiException("찾을 수 없는 회원 번호입니다.")
+                new CustomApiException(NOT_FOUND_USER_ID.getMessage())
         );
 
         // 대출 예외 처리
         Loan loan = loanRepository.findByBookAndUserAndIsReturnedFalse(book, user)
-                .orElseThrow(() -> new CustomApiException("찾을 수 없는 대출 정보입니다."));
+                .orElseThrow(() -> new CustomApiException(NOT_FOUND_LOAN_INFORMATION.getMessage()));
 
         // 패널티 기능
         setPenalty(user, loan);
@@ -85,7 +87,7 @@ public class LoanService {
     @Transactional(readOnly = true)
     public List<GetLoanResponseDto> getListForUser(Long userId, boolean isAll) {
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new CustomApiException("찾을 수 없는 회원 번호입니다.")
+                new CustomApiException(NOT_FOUND_USER_ID.getMessage())
         );
 
         return loanRepository.findByUserOrderByLoanedAt(user)
@@ -99,7 +101,7 @@ public class LoanService {
     private static void checkPenalty(User user) {
         LocalDateTime now = LocalDateTime.now();
         if (user.getPenalizedAt() != null && now.isBefore(user.getPenalizedAt())) {
-            throw new CustomApiException("패널티로 인해 도서를 대출 받을 수 없습니다.");
+            throw new CustomApiException(PENALTY_PREVENTS_LOAN.getMessage());
         }
     }
 

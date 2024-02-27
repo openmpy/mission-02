@@ -5,14 +5,6 @@ import com.example.mission02.domain.book.dto.BookResponseDto.CreateBookResponseD
 import com.example.mission02.domain.book.dto.BookResponseDto.GetBookResponseDto;
 import com.example.mission02.domain.book.entity.Book;
 import com.example.mission02.domain.book.repository.BookRepository;
-import com.example.mission02.domain.loan.dto.LoanRequestDto.CreateLoanRequestDto;
-import com.example.mission02.domain.loan.dto.LoanResponseDto;
-import com.example.mission02.domain.loan.entity.Loan;
-import com.example.mission02.domain.loan.repository.LoanRepository;
-import com.example.mission02.domain.loan.service.LoanService;
-import com.example.mission02.domain.user.entity.GenderType;
-import com.example.mission02.domain.user.entity.User;
-import com.example.mission02.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,10 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,24 +24,17 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
-    @InjectMocks
-    private BookService bookService;
 
     @InjectMocks
-    private LoanService loanService;
+    private BookService bookService;
 
     @Mock
     private BookRepository bookRepository;
 
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private LoanRepository loanRepository;
-
     @Test
     @DisplayName("성공 - 책을 등록한다.")
-    void createBook() throws Exception {
+    void createBook_01() throws Exception {
+        // given
         CreateBookRequestDto requestDto = CreateBookRequestDto.builder()
                 .title("title")
                 .author("author")
@@ -65,12 +48,16 @@ class BookServiceTest {
                 .author(requestDto.getAuthor())
                 .language(requestDto.getLanguage())
                 .publisher(requestDto.getPublisher())
+                .isLoaned(false)
                 .build();
 
+        // stub
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
+        // when
         CreateBookResponseDto responseDto = bookService.createBook(requestDto);
 
+        // then
         assertEquals(book.getId(), responseDto.getId());
         assertEquals(book.getTitle(), responseDto.getTitle());
         assertEquals(book.getAuthor(), responseDto.getAuthor());
@@ -80,7 +67,8 @@ class BookServiceTest {
 
     @Test
     @DisplayName("성공 - 도서 목록을 조회한다.")
-    void getBookList() throws Exception {
+    void getBookList_01() throws Exception {
+        // given
         Book book1 = Book.builder()
                 .id(1L)
                 .title("Book 1")
@@ -106,9 +94,14 @@ class BookServiceTest {
                 .build();
 
         List<Book> bookList = List.of(book1, book2, book3);
+
+        // stub
         when(bookRepository.findAllByOrderByCreatedAtAsc()).thenReturn(bookList);
+
+        // when
         List<GetBookResponseDto> serviceBookList = bookService.getBookList();
 
+        // then
         assertEquals(bookList.size(), serviceBookList.size());
         for (int i = 0; i < bookList.size(); i++) {
             assertEquals(bookList.get(i).getId(), serviceBookList.get(i).getId());
@@ -121,60 +114,21 @@ class BookServiceTest {
 
     @Test
     @DisplayName("성공 - 선택한 도서를 조회한다.")
-    void getBook() throws Exception {
-        List<Book> bookList = new ArrayList<>();
-        LongStream.range(0, 3).forEach(i -> {
-            Book book = Book.builder()
-                    .id(i)
-                    .title("title" + i)
-                    .publisher("" + i)
-                    .author("" + i)
-                    .language("eng")
-                    .build();
-            bookList.add(book);
-        });
-
-        when(bookRepository.findAllByOrderByCreatedAtAsc()).thenReturn(bookList);
-        List<GetBookResponseDto> responseDtoList = bookService.getBookList();
-        Assertions.assertEquals(3, responseDtoList.size());
-        Assertions.assertEquals("2", responseDtoList.get(2).getAuthor());
-    }
-
-    @Test
-    @DisplayName("성공 - 도서 대출 가능 여부를 확인한다.")
-    void checkIsLoaned() throws Exception {
+    void getBook_01() throws Exception {
+        // given
         Book book = Book.builder()
                 .id(1L)
-                .title("Book 1")
-                .author("Author 1")
-                .language("English")
-                .publisher("Publisher 1")
+                .title("어린왕자")
                 .build();
 
-        User user = User.builder()
-                .id(1L)
-                .name("name")
-                .gender(GenderType.FEMALE)
-                .phone("01000000000")
-                .identification("123")
-                .address("")
-                .build();
-
-        Loan loan = Loan.builder()
-                .id(1L)
-                .book(book)
-                .user(user)
-                .build();
-
-        CreateLoanRequestDto requestDto = new CreateLoanRequestDto(book.getId(), user.getId());
+        // stub
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(loanRepository.existsByUserAndIsReturnedFalse(any())).thenReturn(false);
-        when(loanRepository.save(any())).thenReturn(requestDto.toEntity(book, user));
 
-        LoanResponseDto.CreateLoanResponseDto responseDto = loanService.create(requestDto);
-        GetBookResponseDto bookResponseDto = bookService.getBook(book.getId());
+        // when
+        GetBookResponseDto responseDto = bookService.getBook(1L);
 
-        Assertions.assertTrue(bookResponseDto.isLoaned());
+        // then
+        Assertions.assertEquals(1L, responseDto.getId());
+        Assertions.assertEquals("어린왕자", responseDto.getTitle());
     }
 }

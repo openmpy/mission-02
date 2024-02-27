@@ -9,11 +9,15 @@ import com.example.mission02.global.handler.exception.CustomApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+
+import static com.example.mission02.global.handler.exception.ErrorCode.NOT_FOUND_BOOK_ID;
 
 @RequiredArgsConstructor
 @Service
 public class BookService {
+
     private final BookRepository bookRepository;
 
     public CreateBookResponseDto createBook(CreateBookRequestDto requestDto) {
@@ -32,8 +36,9 @@ public class BookService {
     @Transactional(readOnly = true)
     public GetBookResponseDto getBook(Long id) {
         Book book = bookRepository.findById(id).orElseThrow(() ->
-                new CustomApiException("찾는 책이 없습니다.")
+                new CustomApiException(NOT_FOUND_BOOK_ID.getMessage())
         );
+
         return new GetBookResponseDto(book);
     }
 }

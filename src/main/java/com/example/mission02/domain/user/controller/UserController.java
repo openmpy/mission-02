@@ -8,20 +8,21 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 @RestController
-@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody @Valid CreateUserRequestDto requestDto) {
-        CreateUserResponseDto responseDto = userService.CreateUser(requestDto);
+    public ResponseEntity<?> createUser(@RequestBody @Valid CreateUserRequestDto requestDto, BindingResult bindingResult) {
+        CreateUserResponseDto responseDto = userService.createUser(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new ResponseDto<>(true, "회원 등록", responseDto)
         );
