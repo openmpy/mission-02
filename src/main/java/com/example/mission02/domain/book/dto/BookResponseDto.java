@@ -51,6 +51,7 @@ public class BookResponseDto {
             this.language = book.getLanguage();
             this.publisher = book.getPublisher();
             this.createdAt = book.getCreatedAt();
+            this.isLoaned=book.isLoaned();
         }
     }
 }
