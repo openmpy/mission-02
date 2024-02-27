@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 @Entity
-@NoArgsConstructor
 public class Book extends Timestamped {
 
     @Id
@@ -42,7 +41,7 @@ public class Book extends Timestamped {
         this.language = book.getLanguage();
         this.publisher = book.getPublisher();
     }
-  
+
     public void updateLoaned(boolean loaned) {
         this.isLoaned = loaned;
     }
