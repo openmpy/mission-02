@@ -37,4 +37,8 @@ public class User {
     private String address;
 
     private LocalDateTime penalizedAt;
+
+    public void updatePenalizedAt(LocalDateTime penalizedAt) {
+        this.penalizedAt = penalizedAt;
+    }
 }
