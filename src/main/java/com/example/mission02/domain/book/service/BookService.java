@@ -22,7 +22,9 @@ public class BookService {
     }
 
     public List<GetBookResponseDto> getBookList(){
-        List<GetBookResponseDto> bookList = bookRepository.findAll().stream().map(GetBookResponseDto::new).toList();
-        return bookList;
+        return bookRepository.findAllByOrderByCreatedAtAsc()
+                .stream()
+                .map(GetBookResponseDto::new)
+                .toList();
     }
 }

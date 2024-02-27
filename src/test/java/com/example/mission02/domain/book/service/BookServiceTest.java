@@ -85,7 +85,7 @@ class BookServiceTest {
                 .build();
 
         List<Book> bookList = List.of(book1, book2, book3);
-        when(bookRepository.findAll()).thenReturn(bookList);
+        when(bookRepository.findAllByOrderByCreatedAtAsc()).thenReturn(bookList);
         List<GetBookResponseDto> serviceBookList = bookService.getBookList();
 
         assertEquals(bookList.size(), serviceBookList.size());
