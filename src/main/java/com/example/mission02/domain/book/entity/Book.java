@@ -32,6 +32,7 @@ public class Book extends Timestamped {
 
     private boolean isLoaned;
 
+
     public void updateLoaned(boolean loaned) {
         this.isLoaned = loaned;
     }
