@@ -161,6 +161,34 @@ class LoanServiceTest {
     }
 
     @Test
+    @DisplayName("실패 - 패널티로 인해 도서 대출에 실패한다.")
+    void create_06() throws Exception {
+        // given
+        Book book = Book.builder()
+                .id(1L)
+                .build();
+
+        LocalDateTime now = LocalDateTime.now();
+
+        User user = User.builder()
+                .id(1L)
+                .penalizedAt(now.plusDays(14))
+                .build();
+
+        CreateLoanRequestDto requestDto = new CreateLoanRequestDto(book.getId(), user.getId());
+
+        // stub
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+
+        // when & then
+        CustomApiException exception = Assertions.assertThrows(CustomApiException.class, () ->
+                loanService.create(requestDto)
+        );
+        System.out.println("exception = " + exception);
+    }
+
+    @Test
     @DisplayName("성공 - 선택한 도서 반납에 성공한다.")
     void returned_01() throws Exception {
         // given
@@ -259,6 +287,48 @@ class LoanServiceTest {
                 loanService.returned(requestDto)
         );
         System.out.println("exception = " + exception);
+    }
+
+    @Test
+    @DisplayName("성공 - 선택한 도서 반납에 성공하지만 늦은 반납으로 패널티를 받는다.")
+    void returned_05() throws Exception {
+        // given
+        Book book = Book.builder()
+                .id(1L)
+                .isLoaned(true)
+                .build();
+
+        User user = User.builder()
+                .id(1L)
+                .penalizedAt(null)
+                .build();
+
+        LocalDateTime now = LocalDateTime.now();
+
+        Loan loan = Loan.builder()
+                .id(1L)
+                .book(book)
+                .user(user)
+                .isReturned(false)
+                .loanedAt(now.minusDays(100))
+                .returnedAt(null)
+                .build();
+
+        ReturnedLoanRequestDto requestDto = new ReturnedLoanRequestDto(book.getId(), user.getId());
+
+        // stub
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(loanRepository.findByBookAndUserAndIsReturnedFalse(any(), any())).thenReturn(Optional.of(loan));
+
+        // when
+        ReturnedLoanResponseDto responseDto = loanService.returned(requestDto);
+
+        // then
+        Assertions.assertTrue(responseDto.isReturned());
+        Assertions.assertNotNull(responseDto.getReturnedAt());
+        Assertions.assertFalse(book.isLoaned());
+        Assertions.assertNotNull(user.getPenalizedAt());
     }
 
     @Test
