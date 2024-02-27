@@ -296,7 +296,7 @@ class LoanServiceTest {
         when(loanRepository.findByUserOrderByLoanedAt(any())).thenReturn(loanList);
 
         // when
-        List<GetLoanResponseDto> responseDtoList = loanService.getListForUser(1L);
+        List<GetLoanResponseDto> responseDtoList = loanService.getListForUser(1L, true);
 
         // then
         Assertions.assertEquals(2, responseDtoList.size());
@@ -309,8 +309,50 @@ class LoanServiceTest {
     void getListForUser_02() throws Exception {
         // when & then
         CustomApiException exception = Assertions.assertThrows(CustomApiException.class, () ->
-                loanService.getListForUser(1L)
+                loanService.getListForUser(1L, true)
         );
         System.out.println("exception = " + exception);
+    }
+
+    @Test
+    @DisplayName("성공 - 회원 번호로 도서 대출 내역에 조건을 단 목록을 조회한다.")
+    void getListForUser_03() throws Exception {
+        // given
+        Book book = Book.builder()
+                .id(1L)
+                .title("어린왕자")
+                .build();
+
+        User user = User.builder()
+                .id(1L)
+                .name("손흥민")
+                .build();
+
+        Loan loan1 = Loan.builder()
+                .id(1L)
+                .book(book)
+                .user(user)
+                .isReturned(true)
+                .build();
+
+        Loan loan2 = Loan.builder()
+                .id(2L)
+                .book(book)
+                .user(user)
+                .isReturned(false)
+                .build();
+
+        List<Loan> loanList = List.of(loan1, loan2);
+
+        // stub
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(loanRepository.findByUserOrderByLoanedAt(any())).thenReturn(loanList);
+
+        // when
+        List<GetLoanResponseDto> responseDtoList = loanService.getListForUser(1L, false);
+
+        // then
+        Assertions.assertEquals(1, responseDtoList.size());
+        Assertions.assertFalse(responseDtoList.get(0).isReturned());
     }
 }

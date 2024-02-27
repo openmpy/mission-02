@@ -74,12 +74,14 @@ public class LoanService {
     }
 
     @Transactional(readOnly = true)
-    public List<GetLoanResponseDto> getListForUser(Long userId) {
+    public List<GetLoanResponseDto> getListForUser(Long userId, boolean isAll) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new CustomApiException("찾을 수 없는 회원 번호입니다.")
         );
 
-        return loanRepository.findByUserOrderByLoanedAt(user).stream()
+        return loanRepository.findByUserOrderByLoanedAt(user)
+                .stream()
+                .filter(loan -> isAll || !loan.isReturned())
                 .map(GetLoanResponseDto::new)
                 .toList();
     }
