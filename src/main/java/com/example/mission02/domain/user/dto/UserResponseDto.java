@@ -14,14 +14,12 @@ public class UserResponseDto {
         private String name;
         private GenderType gender;
         private String phone;
-        private String identification;
         private String address;
 
         public CreateUserResponseDto(User user) {
             this.name = user.getName();
             this.gender = user.getGender();
             this.phone = user.getPhone();
-            this.identification = user.getIdentification();
             this.address = user.getAddress();
         }
 

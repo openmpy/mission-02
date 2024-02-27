@@ -48,7 +48,6 @@ class UserServiceTest {
         CreateUserResponseDto responseDto = userService.CreateUser(requestDto);
 
         assertEquals(user.getAddress(), responseDto.getAddress());
-        assertEquals(user.getIdentification(), responseDto.getIdentification());
 
     }
 
