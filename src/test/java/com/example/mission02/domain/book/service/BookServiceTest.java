@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-public class BookServiceTest {
+class BookServiceTest {
     @InjectMocks
     private BookService bookService;
 
