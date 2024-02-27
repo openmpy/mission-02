@@ -12,6 +12,7 @@ public class UserRequestDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Builder
     public static class CreateUserRequestDto{
         @NotNull(message = "이름을 입력해주세요.")
         private String name;
