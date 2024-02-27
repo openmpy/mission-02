@@ -1,7 +1,7 @@
 package com.example.mission02.domain.book.controller;
 
 import com.example.mission02.domain.book.dto.BookRequestDto.CreateBookRequestDto;
-import com.example.mission02.domain.book.dto.BookResponseDto;
+import com.example.mission02.domain.book.dto.BookResponseDto.GetBookResponseDto;
 import com.example.mission02.domain.book.dto.BookResponseDto.CreateBookResponseDto;
 import com.example.mission02.domain.book.service.BookService;
 import com.example.mission02.global.dto.ResponseDto;
@@ -23,16 +23,24 @@ public class BookController {
     @PostMapping
     public ResponseEntity<?> createBook(@RequestBody @Valid CreateBookRequestDto requestDto, BindingResult bindingResult) {
         CreateBookResponseDto responseDto = bookService.createBook(requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(
+        return ResponseEntity.ok().body(
                 new ResponseDto<>(true, "게시글 작성", responseDto)
         );
     }
   
     @GetMapping
     public ResponseEntity<?> getBookList() {
-        List<BookResponseDto.GetBookResponseDto> bookList = bookService.getBookList();
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                new ResponseDto<>(true, "게시글 작성", bookList)
+        List<GetBookResponseDto> bookList = bookService.getBookList();
+        return ResponseEntity.ok().body(
+                new ResponseDto<>(true, "도서 목록 조회", bookList)
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getList(@PathVariable long id) {
+        GetBookResponseDto book = bookService.getBook(id);
+        return ResponseEntity.ok().body(
+                new ResponseDto<>(true, "특정 도서 조회", book)
         );
     }
 }
