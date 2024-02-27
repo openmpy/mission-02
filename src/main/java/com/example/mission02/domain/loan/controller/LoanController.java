@@ -40,8 +40,8 @@ public class LoanController {
     }
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<?> getListForUser(@PathVariable Long userId) {
-        List<GetLoanResponseDto> responseDtoList = loanService.getListForUser(userId);
+    public ResponseEntity<?> getListForUser(@PathVariable Long userId, @RequestParam(defaultValue = "true") boolean isAll) {
+        List<GetLoanResponseDto> responseDtoList = loanService.getListForUser(userId, isAll);
         return ResponseEntity.ok().body(
                 new ResponseDto<>(true, "대출 내역 조회 기능", responseDtoList)
         );
