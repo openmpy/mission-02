@@ -23,7 +23,7 @@ public class BookController {
     @PostMapping
     public ResponseEntity<?> createBook(@RequestBody @Valid CreateBookRequestDto requestDto, BindingResult bindingResult) {
         CreateBookResponseDto responseDto = bookService.createBook(requestDto);
-        return ResponseEntity.ok().body(
+        return ResponseEntity.status(HttpStatus.CREATED).body(
                 new ResponseDto<>(true, "게시글 작성", responseDto)
         );
     }
