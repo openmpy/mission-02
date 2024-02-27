@@ -27,7 +27,7 @@ public class BookController {
                 new ResponseDto<>(true, "게시글 작성", responseDto)
         );
     }
-
+  
     @GetMapping
     public ResponseEntity<?> getBookList() {
         List<BookResponseDto.GetBookResponseDto> bookList = bookService.getBookList();

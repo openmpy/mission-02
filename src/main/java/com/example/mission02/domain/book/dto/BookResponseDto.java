@@ -30,7 +30,6 @@ public class BookResponseDto {
             this.publisher = book.getPublisher();
             this.createdAt = book.getCreatedAt();
         }
-
     }
 
     @AllArgsConstructor

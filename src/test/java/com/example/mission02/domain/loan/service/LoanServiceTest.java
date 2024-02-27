@@ -161,6 +161,34 @@ class LoanServiceTest {
     }
 
     @Test
+    @DisplayName("실패 - 패널티로 인해 도서 대출에 실패한다.")
+    void create_06() throws Exception {
+        // given
+        Book book = Book.builder()
+                .id(1L)
+                .build();
+
+        LocalDateTime now = LocalDateTime.now();
+
+        User user = User.builder()
+                .id(1L)
+                .penalizedAt(now.plusDays(14))
+                .build();
+
+        CreateLoanRequestDto requestDto = new CreateLoanRequestDto(book.getId(), user.getId());
+
+        // stub
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+
+        // when & then
+        CustomApiException exception = Assertions.assertThrows(CustomApiException.class, () ->
+                loanService.create(requestDto)
+        );
+        System.out.println("exception = " + exception);
+    }
+
+    @Test
     @DisplayName("성공 - 선택한 도서 반납에 성공한다.")
     void returned_01() throws Exception {
         // given
@@ -262,6 +290,48 @@ class LoanServiceTest {
     }
 
     @Test
+    @DisplayName("성공 - 선택한 도서 반납에 성공하지만 늦은 반납으로 패널티를 받는다.")
+    void returned_05() throws Exception {
+        // given
+        Book book = Book.builder()
+                .id(1L)
+                .isLoaned(true)
+                .build();
+
+        User user = User.builder()
+                .id(1L)
+                .penalizedAt(null)
+                .build();
+
+        LocalDateTime now = LocalDateTime.now();
+
+        Loan loan = Loan.builder()
+                .id(1L)
+                .book(book)
+                .user(user)
+                .isReturned(false)
+                .loanedAt(now.minusDays(100))
+                .returnedAt(null)
+                .build();
+
+        ReturnedLoanRequestDto requestDto = new ReturnedLoanRequestDto(book.getId(), user.getId());
+
+        // stub
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(loanRepository.findByBookAndUserAndIsReturnedFalse(any(), any())).thenReturn(Optional.of(loan));
+
+        // when
+        ReturnedLoanResponseDto responseDto = loanService.returned(requestDto);
+
+        // then
+        Assertions.assertTrue(responseDto.isReturned());
+        Assertions.assertNotNull(responseDto.getReturnedAt());
+        Assertions.assertFalse(book.isLoaned());
+        Assertions.assertNotNull(user.getPenalizedAt());
+    }
+
+    @Test
     @DisplayName("성공 - 회원 번호로 도서 대출 내역 목록을 조회한다.")
     void getListForUser_01() throws Exception {
         // given
@@ -296,7 +366,7 @@ class LoanServiceTest {
         when(loanRepository.findByUserOrderByLoanedAt(any())).thenReturn(loanList);
 
         // when
-        List<GetLoanResponseDto> responseDtoList = loanService.getListForUser(1L);
+        List<GetLoanResponseDto> responseDtoList = loanService.getListForUser(1L, true);
 
         // then
         Assertions.assertEquals(2, responseDtoList.size());
@@ -309,8 +379,50 @@ class LoanServiceTest {
     void getListForUser_02() throws Exception {
         // when & then
         CustomApiException exception = Assertions.assertThrows(CustomApiException.class, () ->
-                loanService.getListForUser(1L)
+                loanService.getListForUser(1L, true)
         );
         System.out.println("exception = " + exception);
+    }
+
+    @Test
+    @DisplayName("성공 - 회원 번호로 도서 대출 내역에 조건을 단 목록을 조회한다.")
+    void getListForUser_03() throws Exception {
+        // given
+        Book book = Book.builder()
+                .id(1L)
+                .title("어린왕자")
+                .build();
+
+        User user = User.builder()
+                .id(1L)
+                .name("손흥민")
+                .build();
+
+        Loan loan1 = Loan.builder()
+                .id(1L)
+                .book(book)
+                .user(user)
+                .isReturned(true)
+                .build();
+
+        Loan loan2 = Loan.builder()
+                .id(2L)
+                .book(book)
+                .user(user)
+                .isReturned(false)
+                .build();
+
+        List<Loan> loanList = List.of(loan1, loan2);
+
+        // stub
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(loanRepository.findByUserOrderByLoanedAt(any())).thenReturn(loanList);
+
+        // when
+        List<GetLoanResponseDto> responseDtoList = loanService.getListForUser(1L, false);
+
+        // then
+        Assertions.assertEquals(1, responseDtoList.size());
+        Assertions.assertFalse(responseDtoList.get(0).isReturned());
     }
 }

@@ -8,7 +8,6 @@ import com.example.mission02.domain.book.entity.Book;
 import com.example.mission02.domain.book.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,7 +19,7 @@ public class BookService {
         Book book = bookRepository.save(requestDto.toEntity());
         return new CreateBookResponseDto(book);
     }
-
+    
     public List<GetBookResponseDto> getBookList(){
         return bookRepository.findAllByOrderByCreatedAtAsc()
                 .stream()
