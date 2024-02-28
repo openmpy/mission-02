@@ -9,6 +9,9 @@ import com.example.mission02.domain.loan.dto.LoanResponseDto.GetLoanResponseDto;
 import com.example.mission02.domain.loan.dto.LoanResponseDto.ReturnedLoanResponseDto;
 import com.example.mission02.domain.loan.entity.Loan;
 import com.example.mission02.domain.loan.repository.LoanRepository;
+import com.example.mission02.domain.loan.strategy.AllLoansFilterStrategy;
+import com.example.mission02.domain.loan.strategy.LoanFilterStrategy;
+import com.example.mission02.domain.loan.strategy.UnreturnedLoansFilterStrategy;
 import com.example.mission02.domain.user.entity.User;
 import com.example.mission02.domain.user.repository.UserRepository;
 import com.example.mission02.global.handler.exception.CustomApiException;
@@ -90,9 +93,11 @@ public class LoanService {
                 new CustomApiException(NOT_FOUND_USER_ID.getMessage())
         );
 
+        LoanFilterStrategy filterStrategy = isAll ? new AllLoansFilterStrategy() : new UnreturnedLoansFilterStrategy();
+
         return loanRepository.findByUserOrderByLoanedAt(user)
                 .stream()
-                .filter(loan -> isAll || !loan.isReturned())
+                .filter(loan -> filterStrategy.filterLoan(loan, isAll))
                 .map(GetLoanResponseDto::new)
                 .toList();
     }
