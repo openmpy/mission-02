@@ -61,11 +61,11 @@
 
 ## 🖼️ Use Case Diagram
 
-<img src="https://github.com/openmpy/mission-02/assets/150704638/d12aab26-92f5-4932-9ad4-657fff55dbcc" width=600 height=400>
+![Blank diagram - Page 1 (4)](https://github.com/openmpy/mission-02/assets/150704638/f7eb18cd-0972-4b5b-8794-18ddd2864afd)
 
 ## 🔖 ERD
 
-<img src="https://github.com/openmpy/mission-02/assets/150704638/3657b361-bf38-4487-ba54-37378bfba717" width=900 height=300>
+![Blank diagram - Page 1 (5)](https://github.com/openmpy/mission-02/assets/150704638/676f6159-f20a-4e38-b03d-14e29dba631f)
 
 ## 📄 API 명세서
 
