@@ -28,20 +28,20 @@ public class BookController {
     @PostMapping
     public ResponseDto<CreateBookResponseDto> createBook(@RequestBody @Valid CreateBookRequestDto requestDto, BindingResult bindingResult) {
         CreateBookResponseDto responseDto = bookService.createBook(requestDto);
-        return new ResponseDto<>(true, "게시글 작성", responseDto);
+        return ResponseDto.success("게시글 작성", responseDto);
     }
 
     @Operation(summary = "도서 목록 조회 기능", description = "등록된 모든 도서를 조회할 수 있는 API")
     @GetMapping
     public ResponseDto<List<GetBookResponseDto>> getBookList() {
         List<GetBookResponseDto> responseDtoList = bookService.getBookList();
-        return new ResponseDto<>(true, "도서 목록 조회", responseDtoList);
+        return ResponseDto.success("도서 목록 조회", responseDtoList);
     }
 
     @Operation(summary = "선택한 도서 정보 조회 기능", description = "선택한 도서 정보를 조회할 수 있는 API")
     @GetMapping("/{id}")
     public ResponseDto<GetBookResponseDto> getList(@PathVariable Long id) {
         GetBookResponseDto responseDto = bookService.getBook(id);
-        return new ResponseDto<>(true, "특정 도서 조회", responseDto);
+        return ResponseDto.success("특정 도서 조회", responseDto);
     }
 }

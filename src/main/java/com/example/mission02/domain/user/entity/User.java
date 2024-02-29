@@ -41,4 +41,8 @@ public class User {
     public void updatePenalizedAt(LocalDateTime penalizedAt) {
         this.penalizedAt = penalizedAt;
     }
+
+    public boolean hasPenalty(LocalDateTime now) {
+        return penalizedAt != null && now.isBefore(penalizedAt);
+    }
 }

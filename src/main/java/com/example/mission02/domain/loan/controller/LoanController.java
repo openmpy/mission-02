@@ -30,20 +30,20 @@ public class LoanController {
     @PostMapping
     public ResponseDto<CreateLoanResponseDto> create(@RequestBody @Valid CreateLoanRequestDto requestDto, BindingResult bindingResult) {
         CreateLoanResponseDto responseDto = loanService.create(requestDto);
-        return new ResponseDto<>(true, "선택한 도서 대출 기능", responseDto);
+        return ResponseDto.success("선택한 도서 대출 기능", responseDto);
     }
 
     @Operation(summary = "선택한 도서 반납 기능", description = "선택한 도서를 반납할 수 있는 API")
     @PutMapping("/return")
     public ResponseDto<ReturnedLoanResponseDto> returned(@RequestBody @Valid ReturnedLoanRequestDto requestDto, BindingResult bindingResult) {
         ReturnedLoanResponseDto responseDto = loanService.returned(requestDto);
-        return new ResponseDto<>(true, "선택한 도서 반납 기능", responseDto);
+        return ResponseDto.success("선택한 도서 반납 기능", responseDto);
     }
 
     @Operation(summary = "대출 내역 조회 기능", description = "대출한 도서 내역을 조회할 수 있는 API")
     @GetMapping("/users/{userId}")
     public ResponseDto<List<GetLoanResponseDto>> getListForUser(@PathVariable Long userId, @RequestParam(defaultValue = "true") boolean isAll) {
         List<GetLoanResponseDto> responseDtoList = loanService.getListForUser(userId, isAll);
-        return new ResponseDto<>(true, "대출 내역 조회 기능", responseDtoList);
+        return ResponseDto.success("대출 내역 조회 기능", responseDtoList);
     }
 }

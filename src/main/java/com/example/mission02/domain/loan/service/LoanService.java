@@ -105,7 +105,7 @@ public class LoanService {
     // 패널티 검사
     private static void checkPenalty(User user) {
         LocalDateTime now = LocalDateTime.now();
-        if (user.getPenalizedAt() != null && now.isBefore(user.getPenalizedAt())) {
+        if (user.hasPenalty(now)) {
             throw new CustomApiException(PENALTY_PREVENTS_LOAN.getMessage());
         }
     }

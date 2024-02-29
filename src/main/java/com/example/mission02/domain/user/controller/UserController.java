@@ -25,6 +25,6 @@ public class UserController {
     @PostMapping
     public ResponseDto<CreateUserResponseDto> createUser(@RequestBody @Valid CreateUserRequestDto requestDto, BindingResult bindingResult) {
         CreateUserResponseDto responseDto = userService.createUser(requestDto);
-        return new ResponseDto<>(true, "회원 등록", responseDto);
+        return ResponseDto.success("회원 등록", responseDto);
     }
 }
