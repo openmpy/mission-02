@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,29 +26,24 @@ public class LoanController {
     private final LoanService loanService;
 
     @Operation(summary = "선택한 도서 대출 기능", description = "선택한 도서를 대출할 수 있는 API")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody @Valid CreateLoanRequestDto requestDto, BindingResult bindingResult) {
+    public ResponseDto<CreateLoanResponseDto> create(@RequestBody @Valid CreateLoanRequestDto requestDto, BindingResult bindingResult) {
         CreateLoanResponseDto responseDto = loanService.create(requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                new ResponseDto<>(true, "선택한 도서 대출 기능", responseDto)
-        );
+        return new ResponseDto<>(true, "선택한 도서 대출 기능", responseDto);
     }
 
     @Operation(summary = "선택한 도서 반납 기능", description = "선택한 도서를 반납할 수 있는 API")
     @PutMapping("/return")
-    public ResponseEntity<?> returned(@RequestBody @Valid ReturnedLoanRequestDto requestDto, BindingResult bindingResult) {
+    public ResponseDto<ReturnedLoanResponseDto> returned(@RequestBody @Valid ReturnedLoanRequestDto requestDto, BindingResult bindingResult) {
         ReturnedLoanResponseDto responseDto = loanService.returned(requestDto);
-        return ResponseEntity.ok().body(
-                new ResponseDto<>(true, "선택한 도서 반납 기능", responseDto)
-        );
+        return new ResponseDto<>(true, "선택한 도서 반납 기능", responseDto);
     }
 
     @Operation(summary = "대출 내역 조회 기능", description = "대출한 도서 내역을 조회할 수 있는 API")
     @GetMapping("/users/{userId}")
-    public ResponseEntity<?> getListForUser(@PathVariable Long userId, @RequestParam(defaultValue = "true") boolean isAll) {
+    public ResponseDto<List<GetLoanResponseDto>> getListForUser(@PathVariable Long userId, @RequestParam(defaultValue = "true") boolean isAll) {
         List<GetLoanResponseDto> responseDtoList = loanService.getListForUser(userId, isAll);
-        return ResponseEntity.ok().body(
-                new ResponseDto<>(true, "대출 내역 조회 기능", responseDtoList)
-        );
+        return new ResponseDto<>(true, "대출 내역 조회 기능", responseDtoList);
     }
 }

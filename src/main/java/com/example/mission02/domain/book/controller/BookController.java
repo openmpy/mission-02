@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,29 +24,24 @@ public class BookController {
     private final BookService bookService;
 
     @Operation(summary = "도서 등록 기능", description = "도서를 등록할 수 있는 API")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ResponseEntity<?> createBook(@RequestBody @Valid CreateBookRequestDto requestDto, BindingResult bindingResult) {
+    public ResponseDto<CreateBookResponseDto> createBook(@RequestBody @Valid CreateBookRequestDto requestDto, BindingResult bindingResult) {
         CreateBookResponseDto responseDto = bookService.createBook(requestDto);
-        return ResponseEntity.ok().body(
-                new ResponseDto<>(true, "게시글 작성", responseDto)
-        );
+        return new ResponseDto<>(true, "게시글 작성", responseDto);
     }
 
     @Operation(summary = "도서 목록 조회 기능", description = "등록된 모든 도서를 조회할 수 있는 API")
     @GetMapping
-    public ResponseEntity<?> getBookList() {
+    public ResponseDto<List<GetBookResponseDto>> getBookList() {
         List<GetBookResponseDto> responseDtoList = bookService.getBookList();
-        return ResponseEntity.ok().body(
-                new ResponseDto<>(true, "도서 목록 조회", responseDtoList)
-        );
+        return new ResponseDto<>(true, "도서 목록 조회", responseDtoList);
     }
 
     @Operation(summary = "선택한 도서 정보 조회 기능", description = "선택한 도서 정보를 조회할 수 있는 API")
     @GetMapping("/{id}")
-    public ResponseEntity<?> getList(@PathVariable Long id) {
+    public ResponseDto<GetBookResponseDto> getList(@PathVariable Long id) {
         GetBookResponseDto responseDto = bookService.getBook(id);
-        return ResponseEntity.ok().body(
-                new ResponseDto<>(true, "특정 도서 조회", responseDto)
-        );
+        return new ResponseDto<>(true, "특정 도서 조회", responseDto);
     }
 }
